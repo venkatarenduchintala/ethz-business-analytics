@@ -35,7 +35,7 @@ Throughout this session, we will work predominantly with one dataset called *Ger
 The data is loaded via:
 
 ```{r}
-library(caret)
+tzlibrary(caret)
 data(GermanCredit)
 ```
 
