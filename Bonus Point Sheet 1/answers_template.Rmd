@@ -26,7 +26,7 @@ summary(s.studentAnswers)
 
 ## ggplot2 trials
 ```{r ggplot2 trials}
-
+View(ggplot2::mpg)
 ```
 
 
