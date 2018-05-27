@@ -1,0 +1,215 @@
+---
+title: "Practical Session 3: Advanced Machine Learning"
+output: html_notebook
+---
+
+# Guidelines
+
+This sheet presents a collection of exercises as part of the third practical session. It is designed as a 'do-it-yourself' process where you can ask questions interactively upon request. 
+
+Our recommendations:
+
+* Ask questions! Reach out to your neighbors or the teaching assistants. As a first step, it is also wise to consult the official help pages or a websearch. 
+
+* Follow up with the background materials where necessary. The lecture slides already cover example codes concerning model tunging and unsupervised learning. These should cover all relevant materials; however, you might find it more effective either to skim the materials or search for background literature online. 
+
+* This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. We also uploaded a short tutorial on R Markdown. 
+
+# Setup 
+
+## Recap: Installing packages
+
+In case you missed the last practical session, here is a short summary of how to install packages in R: 
+
+R is shipped only with a limited core functionality, while most of its strength comes from additional packages that can be installed. Let's say you later need a package *caret*, then you need to install it the first time. For this purpose, simply click on *Tools* in the menu, followed by *Install packages ...*, enter the name and then dlick *Install*. 
+
+After installing the package, you can load it via. If you don't have it installed, you will receive an error message telling you so. 
+
+```{r}
+library(caret)
+```
+
+As a general recommendation, I strongly suggest to collect all calls to *library(...)* at the beginning of your document. Thereby, you have all of them at glance, you circumvent to load packages multiple times (in rare cases this can cause side-effects) and, when porting your script to a different PC, you can easily see which packages to install. 
+
+## Loading data and "caret" package
+
+Throughout this session, we will work predominantly with one dataset called *GermanCredit*. This contains various personal variables from people applying for credit loans and an additional indicator whether there was a default. Our task will be to understand the loan application process and to make predictions to the bank on who will be likely to experience default. This will help the decision-makers in reducing money at risk and help their operations. 
+
+The data is loaded via:
+
+```{r}
+library(caret)
+data(GermanCredit)
+```
+
+Afterwards, you can access the data simply by typing *GermanCredit*. Here is an example:
+
+```{r}
+head(GermanCredit)
+```
+
+Let's check the size of the dataset:
+
+```{r}
+dim(GermanCredit)
+```
+
+## Troubleshooting
+
+*caret* is a very powerful for machine learning, yet you need to be aware of one pitfall: when you access a model, your code might result in an error because *caret* is sometimes not loading packages automatically. Then, you will need to look into the error message, see which package is missing, install it if necessary (see description above) and finally load the package through *library(...)*. 
+
+# Model tuning with "caret"
+
+This section is designed to introduce the basic functions behind the *caret* package in R. 
+
+* Level: intermediate
+
+* Accompanying materials: 8_Resampling.pdf from the lecture slides
+
+* Goals: after this section, you will be able to estimate predictive models with *caret* and inherently perform model tuning. 
+
+## Training vs. test set
+
+Data in predictive modeling is usally divided into a training and test set. Now we perform such a split for *GermanCredit*. 
+
+```{r}
+library(caret)
+
+set.seed(0) # this is added so that the random number generator is alwas giving the same split, which makes it easier to compare results for now.
+
+inTrain <- createDataPartition(GermanCredit$Class, p = 0.2, list = FALSE)
+
+training_set <- GermanCredit[inTrain, ]
+test_set <- GermanCredit[-inTrain, ]
+```
+
+## Template for *caret* 
+
+Here is the overall layout of how code for calling caret:
+
+```{r, eval=FALSE}
+model <- train(your_formula, 
+               data = your_dataset,
+               method = your_method,
+               trControl = your_cross_validation) # the latter is optional
+
+model
+```
+
+## First steps in *caret* 
+
+### Training
+
+Now we start with a simple random forest and train this in *caret*. It is sufficient for now to omit any specification of cross-valdiation as R will automatically pick its default choice. Afterwards, have a look into the default output of the trained model. 
+
+Hints: 
+
+(1) If you enter a formula like *y ~ .*, it automatically puts all variables other than *y* on the right-hand side and uses it as predictors.  
+
+(2) The method identifier for a random forest is "rf". 
+
+(3) The model might run for a couple of seconds. 
+
+```{r}
+
+```
+
+### Inspection of tuning process
+
+In a next step, plot the trained model and interpret what you see. 
+
+```{r}
+
+```
+
+### Prediction performance
+
+What is the prediction performance of the trained model on the test set? 
+
+```{r}
+
+```
+
+
+
+## Further models
+
+In the next step, you are asked to experiment with further models from our class. How are elastic net and a boosted generalized linear model performing? 
+
+Hint: My recommended choice for the elastic net is the method identifier *glmnet*. As a side remark, you can look up the complete list of models at https://topepo.github.io/caret/available-models.html 
+
+```{r}
+# Elastic net
+
+
+# Boosted generalized linear model
+
+```
+
+## Cross-validation
+
+How is the out-of-sample performance from the random forest changing when you used 5-fold cross-validation instead to the default 10-fold? 
+
+Note: this time you will need to set the additional parameter *trControl*. You can find the necessary code either on the lecture slides or in the offical manual under https://topepo.github.io/caret/model-training-and-tuning.html
+
+```{r}
+
+```
+
+## Model performance
+
+Let's recap the concept of accuracy on this dataset. As you might recap from last time, the dataset is heavily imbalanced with around 70% of the loan applications experiencing no default. 
+
+```{r}
+table(GermanCredit$Class)
+```
+
+This setting is difficult as even a simple guess on no default will score 70% automatically withough incorporating the predictor variables as input. In this cases, one often prefers the balanced accuracy over the accuracy. Check the results with *confusionMatrix(...)* and look-up online what the difference between the two are? What are benefits for using balanced accuracy? 
+
+# Unsupervised learning
+
+This section is designed to introduce k-means clustering and PCA in R. 
+
+* Level: intermediate
+
+* Accompanying materials: 9_UnsupervisedLearning.pdf from the lecture slides
+
+* Goals: after this section, you will be able to perform clustering and PCA-based predictions.
+
+## Principal component analysis
+
+The principal component analysis (PCA) is often used for mapping an original dataset onto a lower-dimensional space. This can be beneficial in the case of "wide" data (with many predictors as compared to observations) as it reduces the risk of overfitting. Hence, we will apply the PCA to the *GermanCredit* dataset and test how it affects the prediction performance. 
+
+### PCA with *caret* 
+
+The easiest way is to let *caret* do the preprocessing and use this as input. Look up the help pages on *train(...)* (hint: you can find them via *help(train)*) and search for the parameter *preProcess*. Then compare the elastic net with the default input to the PCA-processed.
+
+Hint: the first time you run it, you will encounter an error concerning that some variables have non-zero variance. Why is this problematic? You can easily remove these variables with the same parameter: you just need to pass a vector of two pre-processing operations to it, out of which one is *nzv* in order to remove these variables.   
+
+```{r}
+
+```
+
+## k-Means clustering
+
+The function *kmeans(data, clusters)* performs clustering. In practice, an additional third argument *nstart = 10* is added to average over random initalizations. 
+
+Let's start with a simple example in which you cluster the GermanCredit dataset (but without the column *Class*).
+
+```{r}
+d <- GermanCredit[ , -10] 
+
+...
+```
+
+### Elbow plot
+
+In the next step, create an elbow plot in order to identify a suitable choice for the number of clusters.
+
+Hint: the *for*-loop can help you in looping over different choices of clusters. Furthermore, let *km* refer to the clustering object, then you can access the explained variance via *sum(km$betweenss)/km$totss*. 
+
+```{r}
+
+```
+
+
