@@ -24,6 +24,12 @@ summary(s.studentAnswers)
 #print(s.studentAnswers)
 ```
 
+## ggplot2 trials
+```{r ggplot2 trials}
+
+```
+
+
 
 ## Exercise 1
 
