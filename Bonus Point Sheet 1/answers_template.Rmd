@@ -1,0 +1,52 @@
+---
+title: |
+  | Business Analytics  
+  | Bonus point sheet - Answers
+author: 'Venkata Subramani Renduchintala / matriculation number: 16-905-416'
+date: "27.05.2018"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(MASS);
+library(ggplot2)
+library(csvread)
+library(tidyverse)
+```
+
+```{r Load Survey.csv}
+surveyCsvPath <- './survey.csv'
+#print(surveyCsvPath)
+s.studentAnswers <- read.csv2(surveyCsvPath, header = TRUE, sep = ",")
+summary(s.studentAnswers)
+#print(s.studentAnswers)
+```
+
+## ggplot2 trials
+```{r ggplot2 trials}
+View(ggplot2::mpg)
+```
+
+
+
+## Exercise 1
+
+### a) Solution:
+##Use the package ggplot2 to create a point plot comparing the age and pulse of the participants. 
+##Color each point according to the gender of the person and additionally label the axis appropriately. 
+##Furthermore, change the color of the points such that males are highlighted with a dark blue color and females in dark red.
+```{r Point Plot comparing age and pulse of participants}
+#create the sample data frame with age and pulse of the participants
+line_data <- data.frame(s.studentAnswers$Pulse, s.studentAnswers$Age)
+ggplot(line_data, aes(x = line_data$s.studentAnswers.Age, y = line_data$s.studentAnswers.Pulse)) + geom_point()
+```
+### b) Solution:
+```{r}
+ 
+```
+
+## Exercise 2
+
+...
