@@ -19,16 +19,12 @@ library(tidyverse)
 ```{r Load Survey.csv}
 surveyCsvPath <- './survey.csv'
 #print(surveyCsvPath)
-s.studentAnswers <- read.csv2(surveyCsvPath, header = TRUE, sep = ",")
+s.studentAnswers <- read.csv2(surveyCsvPath, header = TRUE, sep = ",", row.names = "X", stringsAsFactors = FALSE)
 summary(s.studentAnswers)
+s.studentAnswers$id <- row.names(s.studentAnswers)
+
 #print(s.studentAnswers)
 ```
-
-## ggplot2 trials
-```{r ggplot2 trials}
-View(ggplot2::mpg)
-```
-
 
 
 ## Exercise 1
@@ -39,8 +35,15 @@ View(ggplot2::mpg)
 ##Furthermore, change the color of the points such that males are highlighted with a dark blue color and females in dark red.
 ```{r Point Plot comparing age and pulse of participants}
 #create the sample data frame with age and pulse of the participants
-line_data <- data.frame(s.studentAnswers$Pulse, s.studentAnswers$Age)
-ggplot(line_data, aes(x = line_data$s.studentAnswers.Age, y = line_data$s.studentAnswers.Pulse)) + geom_point()
+df <- data.frame(s.studentAnswers$Pulse, s.studentAnswers$Age, s.studentAnswers$Sex)
+#omit NA values
+df <- na.omit(df)
+
+#Plot
+t <- ggplot2::ggplot(data = df) + 
+  geom_point(mapping = aes(x = df$s.studentAnswers.Age, y = df$s.studentAnswers.Pulse, color = df$s.studentAnswers.Sex), show.legend = TRUE, na.rm =TRUE, size = 1) 
+t + labs(x="Age", y="Pulse", title = "Comparison of participant's Age to Pulse") + 
+  scale_color_manual(name="Gender", values=c('darkred', 'darkblue'))
 ```
 ### b) Solution:
 ```{r}
