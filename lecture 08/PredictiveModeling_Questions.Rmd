@@ -65,6 +65,8 @@ The default is stored in a column named *Class*. Let's look into that one more c
 ```{r}
 head(GermanCredit$Class)
 str(GermanCredit$Class)
+
+head(GermandCredit)
 ```
 
 Finally, here is breakdown of frequencies for each class:
@@ -75,8 +77,9 @@ table(GermanCredit$Class)
 
 First task: what is the ratio of good credits?
 
-```{r}
-
+```{r} 
+numberOfExistingCredits <- GermanCredit$NumberExistingCredits
+print(numberOfExistingCredits)
 ```
 
 
