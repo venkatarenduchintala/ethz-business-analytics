@@ -10,10 +10,23 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-library(MASS);
+library(graphics)
+library(gridExtra)
+library(grid)
+library(markdown)
+library(logging)
 library(ggplot2)
 library(csvread)
 library(tidyverse)
+library(class)
+library(caret)
+library(csv)
+library(csvread)
+library(data.table)
+library(datasets)
+library(formatR)
+library(Matrix)
+library(utils)
 ```
 
 ```{r Load Survey.csv}
@@ -30,9 +43,9 @@ s.studentAnswers$id <- row.names(s.studentAnswers)
 ## Exercise 1
 
 ### a) Solution:
-##Use the package ggplot2 to create a point plot comparing the age and pulse of the participants. 
-##Color each point according to the gender of the person and additionally label the axis appropriately. 
-##Furthermore, change the color of the points such that males are highlighted with a dark blue color and females in dark red.
+###Use the package ggplot2 to create a point plot comparing the age and pulse of the participants. 
+###Color each point according to the gender of the person and additionally label the axis appropriately. 
+###Furthermore, change the color of the points such that males are highlighted with a dark blue color and females in dark red.
 ```{r Point Plot comparing age and pulse of participants}
 #create the sample data frame with age and pulse of the participants
 df <- data.frame(s.studentAnswers$Pulse, s.studentAnswers$Age, s.studentAnswers$Sex)
@@ -45,9 +58,18 @@ t <- ggplot2::ggplot(data = df) +
 t + labs(x="Age", y="Pulse", title = "Comparison of participant's Age to Pulse") + 
   scale_color_manual(name="Gender", values=c('darkred', 'darkblue'))
 ```
+
 ### b) Solution:
-```{r}
- 
+####Use ggplot2 to create boxplot comparing the age distribution of males and females.
+####Cut the y-axis at a maximum age of 30 for better readability. Interpret your results
+```{r Box Plot}
+dfb <- data.frame(s.studentAnswers$Age, s.studentAnswers$Sex);
+dfb <- na.omit(dfb);
+
+ageDistributionPlot <- ggplot(dfb) + 
+  geom_boxplot(mapping = aes(x=dfb$s.studentAnswers.Sex, y=dfb$s.studentAnswers.Age), show.legend = TRUE, na.rm = TRUE) + 
+  labs(x="Gender", y="Age")
+
 ```
 
 ## Exercise 2
