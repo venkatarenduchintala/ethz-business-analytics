@@ -73,5 +73,10 @@ ageDistributionPlot <- ggplot(dfb) +
 ```
 
 ## Exercise 2
+```{r Exercise 2 Setup}
+d_mtcars <- data("mtcars")
+
+```
+
 
 ...
