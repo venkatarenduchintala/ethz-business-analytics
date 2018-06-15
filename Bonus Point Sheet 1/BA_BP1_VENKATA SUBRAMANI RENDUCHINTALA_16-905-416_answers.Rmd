@@ -1,43 +1,34 @@
 ---
-title: |
-  | Business Analytics  
-  | Bonus point sheet - Answers
+title: "| Business Analytics  \n| Bonus point sheet - Answers\n"
 author: 'Venkata Subramani Renduchintala / matriculation number: 16-905-416'
-date: "27.05.2018"
+date: "15.06.2018"
 output:
+  word_document: default
   pdf_document: default
 ---
 
 ```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = FALSE)
-library(graphics)
-#library(grid)
-#library(markdown)
-#library(logging)
-library(ggplot2)
-library(reshape2)
-#library(csvread)
-#library(tidyverse)
-#library(class)
-#library(caret)
-#library(csv)
-#library(csvread)
-#library(data.table)
-#library(datasets)
-#library(formatR)
-#library(Matrix)
-#library(utils)
-#library(gridExtra)
+library("graphics")
+library("ggplot2")
+library("stringi")
+library("reshape2")
+library("caret")
+library("utils")
+library("datasets")
+library("class")
+library("rpart")
+library("party")
 ```
 
 ```{r Load Survey.csv}
 surveyCsvPath <- './survey.csv'
 #print(surveyCsvPath)
 s.studentAnswers <- read.csv(surveyCsvPath, header = TRUE, sep = ",")
-summary(s.studentAnswers)
-s.studentAnswers$id <- row.names(s.studentAnswers)
+
+
 dim(s.studentAnswers)
-#print(s.studentAnswers)
+str(s.studentAnswers)
 ```
 
 
@@ -49,11 +40,9 @@ dim(s.studentAnswers)
 ###Furthermore, change the color of the points such that males are highlighted with a dark blue color and females in dark red.
 ```{r Point Plot comparing age and pulse of participants}
 #create the sample data frame with age and pulse of the participants
-df <- melt(s.studentAnswers, id.vars=c("Age", "Sex", "Pulse"))
+df <- reshape2::melt(s.studentAnswers, id.vars=c("Age", "Sex", "Pulse"))
 #omit NA values
 df <- na.omit(df)
-
-df
 ```
 
 ```{r Ex 1a Plot}
@@ -72,7 +61,6 @@ print(Ex1aPlot)
 ```{r Box Plot}
 dfb <- melt(s.studentAnswers, id.vars=c("Age", "Sex"))
 dfb <- na.omit(dfb);
-dfb
 
 ```
 
@@ -96,11 +84,74 @@ median(dfb.male$Age)
 ## Exercise 2
 ```{r Exercise 2 Setup}
 #data load
-d_mtcars <- data("mtcars")
+data("mtcars")
+head(mtcars)
+dim(mtcars)
+summary(mtcars)
 ```
 
 
-```{r Ex 2a}
+```{r Ex 2a Linear Regression - Model estimation}
+#dependent_variable: miles per gallon mpg
+#INdependent variable: weight wt
+
+#linear regression
+fit <- lm(mpg ~ wt, data = mtcars)
+summary(fit)
+```
+#Interpret the results with regard to our initial question [How is the weight of a car affecting its consumption?]
+# The impact of weight negatively impact the miles per gallon (-5.3445)
+# Model estimated: mpg = 37.2851 - 5.3445 (wt)
+#This model has good fit at R2 of 0.7528
+
+##Visualize the trendline between the two variables, i. e. wt and mpg. In addition, add the observations to the plot and add labels to the axis
+```{r Ex 2a ggplot of the estimated model}
+fit_visual <- ggplot(data = mtcars, aes(y=mpg, x=wt)) +
+  geom_point(aes(size=hp, color=as.factor(cyl))) + 
+  geom_smooth(method = "lm") +
+  labs(y = "Miles per gallon", x= "Weight of car") +
+  scale_color_discrete(name=("cyl"))
+
+print(fit_visual)
+```
+
+##Now estimate a new model (called M in the following) which additionally contains the number of cylinders cyl and the number of forward gears gear: mpg = β0 + β1 wt + β2 cyl + β3 gear
+```{r Ex 2b Estimation of model M}
+M <- lm(formula = mpg ~ wt + cyl + gear, data = mtcars)
+summary(M)
+```
+# the coffecients are β0 = 42.3864, β1 = -3.3921, β2 = -1.5280, β3 = -0.5229
+# wt('***') has the highest significance on the mpg of the car. Next the cyl('**') of the car is next interms of its significance. gear has the least significance on the model
+#This model has very good fit at R2 of 0.8329
+
+## Exercise 2c Split the data into training and test set. Use 30% of the data for training and 70% of the data for testing. Reestimate the model m by only using training data. Predict the mpg variable for the test data. What is the root mean squared error?
+
+```{r Ex 2c Split of data set}
+data("mtcars")
+#always constant
+set.seed(50)
+
+inTrain <- createDataPartition(mtcars$mpg, p = 0.3, list = FALSE )
+
+training_set <- mtcars[inTrain, ]
+test_set <- mtcars[-inTrain, ]
 
 ```
+
+```{r Ex 2c Re-estimation of model M using training data }
+fit_training_set <- lm(formula = mpg ~ ., data = training_set)
+
+summary(fit_training_set)
+```
+
+```{r Ex 2c Prediction of mpg and RMSE}
+prediction_mpg <- predict(fit_training_set, test_set)
+
+rmse <- sqrt(mean((prediction_mpg - test_set$mpg)^2))
+rmse
+
+#Validation
+RMSE(prediction_mpg, test_set$mpg)
+```
+
 
