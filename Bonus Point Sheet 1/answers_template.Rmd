@@ -8,34 +8,35 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = FALSE)
 library(graphics)
-library(grid)
-library(markdown)
-library(logging)
+#library(grid)
+#library(markdown)
+#library(logging)
 library(ggplot2)
-library(csvread)
-library(tidyverse)
-library(class)
-library(caret)
-library(csv)
-library(csvread)
-library(data.table)
-library(datasets)
-library(formatR)
-library(Matrix)
-library(utils)
-library(gridExtra)
+library(reshape2)
+#library(csvread)
+#library(tidyverse)
+#library(class)
+#library(caret)
+#library(csv)
+#library(csvread)
+#library(data.table)
+#library(datasets)
+#library(formatR)
+#library(Matrix)
+#library(utils)
+#library(gridExtra)
 ```
 
 ```{r Load Survey.csv}
 surveyCsvPath <- './survey.csv'
 #print(surveyCsvPath)
-s.studentAnswers <- read.csv2(surveyCsvPath, header = TRUE, sep = ",", row.names = "X", stringsAsFactors = FALSE)
+s.studentAnswers <- read.csv(surveyCsvPath, header = TRUE, sep = ",")
 summary(s.studentAnswers)
 s.studentAnswers$id <- row.names(s.studentAnswers)
-
+dim(s.studentAnswers)
 #print(s.studentAnswers)
 ```
 
@@ -48,35 +49,58 @@ s.studentAnswers$id <- row.names(s.studentAnswers)
 ###Furthermore, change the color of the points such that males are highlighted with a dark blue color and females in dark red.
 ```{r Point Plot comparing age and pulse of participants}
 #create the sample data frame with age and pulse of the participants
-df <- data.frame(s.studentAnswers$Pulse, s.studentAnswers$Age, s.studentAnswers$Sex)
+df <- melt(s.studentAnswers, id.vars=c("Age", "Sex", "Pulse"))
 #omit NA values
 df <- na.omit(df)
 
-#Plot
-t <- ggplot2::ggplot(data = df) + 
-  geom_point(mapping = aes(x = df$s.studentAnswers.Age, y = df$s.studentAnswers.Pulse, color = df$s.studentAnswers.Sex), show.legend = TRUE, na.rm =TRUE, size = 1) 
-t + labs(x="Age", y="Pulse", title = "Comparison of participant's Age to Pulse") + 
-  scale_color_manual(name="Gender", values=c('darkred', 'darkblue'))
+df
 ```
+
+```{r Ex 1a Plot}
+#Plot
+Ex1aPlot <- ggplot2::ggplot(df, aes(x=Age, y=Pulse)) + 
+  geom_point(aes(color = Sex)) + 
+  scale_color_manual(values=c("darkred", "darkblue"))
+print(Ex1aPlot)
+```
+
+
 
 ### b) Solution:
 ####Use ggplot2 to create boxplot comparing the age distribution of males and females.
 ####Cut the y-axis at a maximum age of 30 for better readability. Interpret your results
 ```{r Box Plot}
-dfb <- data.frame(s.studentAnswers$Age, s.studentAnswers$Sex);
+dfb <- melt(s.studentAnswers, id.vars=c("Age", "Sex"))
 dfb <- na.omit(dfb);
+dfb
 
-ageDistributionPlot <- ggplot(dfb) + 
-  geom_boxplot(mapping = aes(x=dfb$s.studentAnswers.Sex, y=dfb$s.studentAnswers.Age), show.legend = TRUE, na.rm = TRUE) + 
-  labs(x="Gender", y="Age")
+```
 
+```{r Ex 1b Plot}
+ageDistributionPlot <- ggplot(dfb, aes(x=Sex, y=Age)) + 
+  geom_boxplot() + 
+  labs(x="Gender", y="Age") +
+  ylim(10,30)
+
+print(ageDistributionPlot)
+
+#Interpretation of Result
+dfb.female <- dfb[which(dfb$Sex=='Female'), ]
+median(dfb.female$Age)
+#18.417
+dfb.male <- dfb[which(dfb$Sex=='Male'), ]
+median(dfb.male$Age)
+#18.917
 ```
 
 ## Exercise 2
 ```{r Exercise 2 Setup}
+#data load
 d_mtcars <- data("mtcars")
-
 ```
 
 
-...
+```{r Ex 2a}
+
+```
+
