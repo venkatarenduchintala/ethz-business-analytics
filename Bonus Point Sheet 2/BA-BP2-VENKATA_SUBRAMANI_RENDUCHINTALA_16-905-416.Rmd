@@ -1,0 +1,33 @@
+---
+title: |
+  | Business Analytics  
+  | Bonus point sheet - Answers
+author: 'Full name / matriculation number: '
+date: "Spring 2078"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 1 (Example)
+
+### a) Solution:
+
+Please provide your bonus point sheet answers in this template. You can write R code like this:
+
+```{r}
+ t <- 5+500
+t
+```
+
+### b) Solution:
+```{r}
+ 
+```
+
+## Exercise 2
+
+...
