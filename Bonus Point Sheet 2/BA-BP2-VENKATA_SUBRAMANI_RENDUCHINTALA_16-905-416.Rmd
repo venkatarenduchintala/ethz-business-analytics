@@ -1,9 +1,9 @@
 ---
-title: |
+title: BP2_16-905-416|
   | Business Analytics  
-  | Bonus point sheet - Answers
-author: 'Full name / matriculation number: '
-date: "Spring 2078"
+  | Bonus point sheet 2 - Answers
+author: 'Venkata Subramani Renduchintala / 16-905-416 '
+date: "Spring 2018"
 output:
   pdf_document: default
 ---
@@ -12,15 +12,25 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r Loading datasets}
+#Loading libraries for Exercise 1
+library(caret)
+library(lattice)
+library(ggplot2)
+library(kernlab)
+```
+
 ## Exercise 1 (Example)
 
 ### a) Solution:
+```{r Exercise 1}
+data("GermanCredit")
+set.seed(0)
+inTrain <- createDataPartition(GermanCredit$Class, p = 0.2, list = FALSE)
+trainingSet <- GermanCredit[inTrain, ]
+testSet <- GermanCredit[-inTrain, ]
 
-Please provide your bonus point sheet answers in this template. You can write R code like this:
 
-```{r}
- t <- 5+500
-t
 ```
 
 ### b) Solution:
